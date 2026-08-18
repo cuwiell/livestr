@@ -6,7 +6,7 @@ import { useAuth } from '@/components/auth/AuthContext';
 import { db } from '@/lib/firebase/client';
 import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { Host } from '@/types/host';
-import { PlusCircle, Settings2, Trash2 } from 'lucide-react';
+import { PlusCircle, Settings2, Trash2, Edit2 } from 'lucide-react';
 
 export default function HostsOverview() {
   const { user } = useAuth();
@@ -73,7 +73,10 @@ export default function HostsOverview() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {hosts.map(host => (
             <div key={host.id} className="group relative flex flex-col rounded-xl border border-neutral-800 bg-neutral-900/50 p-6 transition-all hover:border-neutral-600 hover:bg-neutral-800/80">
-              <div className="absolute right-4 top-4 opacity-0 transition-opacity group-hover:opacity-100">
+              <div className="absolute right-4 top-4 opacity-0 transition-opacity group-hover:opacity-100 flex gap-2">
+                <Link href={`/dashboard/hosts/${host.id}/edit`} className="rounded-md p-2 text-neutral-400 hover:bg-blue-500/20 hover:text-blue-400">
+                  <Edit2 className="h-4 w-4" />
+                </Link>
                 <button onClick={() => handleDelete(host.id!)} className="rounded-md p-2 text-neutral-400 hover:bg-red-500/20 hover:text-red-400">
                   <Trash2 className="h-4 w-4" />
                 </button>
