@@ -15,8 +15,14 @@ import { AudioQueue } from '@/lib/tts/audioQueue';
 import { Settings2, Square, Radio, Volume2, VolumeX } from 'lucide-react';
 import clsx from 'clsx';
 import { Canvas } from '@react-three/fiber';
-import { Environment, ContactShadows } from '@react-three/drei';
+import { Environment, ContactShadows, Html, useProgress } from '@react-three/drei';
 import { AvatarModel } from '@/components/live/Avatar3D';
+import React, { Suspense } from 'react';
+
+function Loader() {
+  const { progress } = useProgress();
+  return <Html center className="text-white text-sm font-medium whitespace-nowrap">Loading 3D... {progress.toFixed(0)}%</Html>;
+}
 
 export default function LiveStudio() {
   const { user } = useAuth();
@@ -392,7 +398,9 @@ export default function LiveStudio() {
                 <Canvas camera={{ position: [0, 0, 5], fov: 40 }} className="w-full h-full bg-gradient-to-b from-neutral-800 to-neutral-950">
                   <ambientLight intensity={1.5} />
                   <directionalLight position={[-5, 5, 5]} intensity={1.5} />
-                  <AvatarModel url={host.avatarUrl} isSpeaking={isAiSpeaking} />
+                  <Suspense fallback={<Loader />}>
+                    <AvatarModel url={host.avatarUrl} isSpeaking={isAiSpeaking} />
+                  </Suspense>
                   <ContactShadows position={[0, -1.5, 0]} opacity={0.4} scale={10} blur={2} far={4} />
                   <Environment preset="city" />
                 </Canvas>
