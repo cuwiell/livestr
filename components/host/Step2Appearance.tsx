@@ -90,6 +90,11 @@ export function Step2Appearance() {
                     setInputUrl(e.target.value);
                     if (!e.target.value) updateData({ avatarUrl: '' });
                   }}
+                  onBlur={() => {
+                    if (inputUrl.startsWith('http')) {
+                      updateData({ avatarUrl: inputUrl, avatarType: 'url' });
+                    }
+                  }}
                   className="w-full rounded-xl border border-neutral-700 bg-neutral-800 p-3 text-white focus:border-blue-500 focus:outline-none placeholder-neutral-600"
                 />
                 <p className="mt-2 text-xs text-neutral-500">Paste a direct link to an image or video.</p>
@@ -138,7 +143,14 @@ export function Step2Appearance() {
               isVideo ? (
                 <video src={hostData.avatarUrl} autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : (
-                <img src={hostData.avatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
+                <img 
+                  src={hostData.avatarUrl} 
+                  alt="Avatar Preview" 
+                  className="w-full h-full object-cover" 
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x700?text=Invalid+Image+URL';
+                  }}
+                />
               )
             ) : (
               <div className="text-neutral-600 flex flex-col items-center gap-2">
