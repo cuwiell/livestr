@@ -9,13 +9,17 @@ export class WebTTSProvider implements TTSProvider {
     // Check if running in browser
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       this.synth = window.speechSynthesis;
-      // Load voices (can be async on some browsers)
-      this.voices = this.synth.getVoices();
-      if (this.voices.length === 0) {
-        this.synth.onvoiceschanged = () => {
-          this.voices = this.synth.getVoices();
-        };
+      // Load voices immediately
+      const loadVoices = () => {
+        this.voices = this.synth.getVoices();
+      };
+      loadVoices();
+      if (this.synth.onvoiceschanged !== undefined) {
+        this.synth.onvoiceschanged = loadVoices;
       }
+      
+      // Clear any stuck utterances from previous sessions
+      this.synth.cancel();
     } else {
       this.synth = {} as SpeechSynthesis; // Mock for SSR
     }
@@ -69,11 +73,11 @@ export class WebTTSProvider implements TTSProvider {
       }
 
       if (options?.pitch !== undefined) {
-        this.currentUtterance.pitch = options.pitch;
+        this.currentUtterance.pitch = Number(options.pitch);
       }
       
       if (options?.speed !== undefined) {
-        this.currentUtterance.rate = options.speed;
+        this.currentUtterance.rate = Number(options.speed);
       }
 
       this.currentUtterance.onend = () => {
