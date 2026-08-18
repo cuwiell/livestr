@@ -61,20 +61,29 @@ export function Step2Appearance() {
             <button
               onClick={() => setTab('url')}
               className={clsx(
-                "flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition",
+                "flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-xs font-medium transition",
                 tab === 'url' ? "bg-neutral-800 text-white" : "text-neutral-500 hover:text-neutral-300"
               )}
             >
-              <LinkIcon className="w-4 h-4" /> Use Direct URL
+              <LinkIcon className="w-4 h-4" /> 2D Image
             </button>
             <button
               onClick={() => setTab('generate')}
               className={clsx(
-                "flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition",
+                "flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-xs font-medium transition",
                 tab === 'generate' ? "bg-blue-600 text-white" : "text-neutral-500 hover:text-neutral-300"
               )}
             >
-              <Sparkles className="w-4 h-4" /> AI Generator
+              <Sparkles className="w-4 h-4" /> Generate
+            </button>
+            <button
+              onClick={() => setTab('3d' as any)}
+              className={clsx(
+                "flex-1 flex items-center justify-center gap-2 rounded-md py-2 text-xs font-medium transition",
+                (tab as any) === '3d' ? "bg-purple-600 text-white" : "text-neutral-500 hover:text-neutral-300"
+              )}
+            >
+              <Sparkles className="w-4 h-4" /> 3D Model
             </button>
           </div>
 
@@ -146,7 +155,56 @@ export function Step2Appearance() {
                 {isGenerating ? 'Generating...' : 'Generate with AI'}
               </button>
             </div>
-          )}
+          ) : (tab as any) === '3d' ? (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-neutral-300 mb-2">Ready Player Me URL (.glb)</label>
+                <input
+                  type="url"
+                  placeholder="https://models.readyplayer.me/your-avatar.glb"
+                  value={inputUrl}
+                  onChange={(e) => {
+                    setInputUrl(e.target.value);
+                  }}
+                  onBlur={() => {
+                    if (inputUrl.endsWith('.glb')) {
+                      updateData({ avatarUrl: inputUrl, avatarType: '3d' });
+                    }
+                  }}
+                  className="w-full rounded-xl border border-neutral-700 bg-neutral-800 p-3 text-white focus:border-purple-500 focus:outline-none placeholder-neutral-600 mb-2"
+                />
+                <p className="mt-2 text-xs text-neutral-500">
+                  Buat avatar gratis di <a href="https://readyplayer.me" target="_blank" className="text-purple-400 hover:underline">readyplayer.me</a> lalu salin link .glb-nya ke sini. Avatar 3D akan bisa lipsync secara otomatis!
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-neutral-800">
+                <p className="text-sm font-medium text-neutral-300 mb-3">Atau gunakan avatar bawaan:</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => {
+                      const url = 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934d6.glb';
+                      setInputUrl(url);
+                      updateData({ avatarUrl: url, avatarType: '3d' });
+                    }}
+                    className="p-3 text-xs rounded-lg border border-neutral-700 bg-neutral-800 hover:border-purple-500 hover:bg-neutral-700 transition"
+                  >
+                    👦 Pria Kacamata
+                  </button>
+                  <button
+                    onClick={() => {
+                      const url = 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934d6.glb'; // Need female equivalent, using same for now
+                      setInputUrl(url);
+                      updateData({ avatarUrl: url, avatarType: '3d' });
+                    }}
+                    className="p-3 text-xs rounded-lg border border-neutral-700 bg-neutral-800 hover:border-purple-500 hover:bg-neutral-700 transition"
+                  >
+                    👩 Wanita Anime
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : null}
         </div>
 
         {/* Right Side: Preview */}
@@ -154,7 +212,15 @@ export function Step2Appearance() {
           <p className="text-sm font-medium text-neutral-400 mb-3">Live Studio Preview</p>
           <div className="relative w-full aspect-[9/16] rounded-2xl border-2 border-neutral-800 bg-neutral-900 overflow-hidden flex items-center justify-center shadow-xl">
             {hostData.avatarUrl ? (
-              isVideo ? (
+              hostData.avatarType === '3d' || hostData.avatarUrl.endsWith('.glb') ? (
+                <div className="text-purple-500 flex flex-col items-center gap-3">
+                  <div className="w-20 h-20 bg-purple-500/10 rounded-full flex items-center justify-center border border-purple-500/30">
+                    <span className="text-3xl">🧊</span>
+                  </div>
+                  <span className="text-sm font-medium">3D Model Loaded</span>
+                  <span className="text-[10px] text-neutral-500 text-center px-4">Preview available in Live Studio</span>
+                </div>
+              ) : isVideo ? (
                 <video src={hostData.avatarUrl} autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : (
                 <img 

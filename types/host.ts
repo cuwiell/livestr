@@ -41,7 +41,7 @@ export interface Host {
   
   avatarUrl: string;
   avatarUrlSpeaking?: string; // For PNGTuber style (mouth open)
-  avatarType: 'css' | 'url' | 'dalle';
+  avatarType: 'css' | 'url' | 'dalle' | '3d';
   
   personality: HostPersonality;
   speakingStyle: HostSpeakingStyle;
