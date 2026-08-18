@@ -40,9 +40,14 @@ export class CommentQueue {
 
     // Scoring
     let score = 0;
-    if (rawComment.content.includes('?')) score += 5; // Question
-    if (rawComment.content.includes('@Tori') || rawComment.content.includes('@Host')) score += 4; // Mention
-    if (normalized.length < 3) score -= 2; // Too short, low priority
+    if (rawComment.isGift) {
+      score += 1000; // Absolute maximum priority
+    } else {
+      if (rawComment.content.includes('?')) score += 5; // Questions get higher priority
+      if (rawComment.content.includes('@Tori') || rawComment.content.includes('@Host')) score += 4; // Mention
+      if (rawComment.content.length > 20) score += 3; // Longer comments are usually better
+      if (rawComment.content.length < 3) score -= 2; // Too short, low priority
+    }
 
     const newComment: LiveComment = {
       ...rawComment,

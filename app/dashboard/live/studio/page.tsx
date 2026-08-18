@@ -12,7 +12,7 @@ import { RealTikTokProvider } from '@/lib/live/providers/realTikTok';
 import { WebTTSProvider } from '@/lib/tts/providers/webTTS';
 import { LiveProvider } from '@/types/live';
 import { AudioQueue } from '@/lib/tts/audioQueue';
-import { Settings2, Square, Radio, Volume2, VolumeX } from 'lucide-react';
+import { Settings2, Square, Radio, Volume2, VolumeX, Gift } from 'lucide-react';
 import clsx from 'clsx';
 import { Canvas } from '@react-three/fiber';
 import { Environment, ContactShadows, Html, useProgress } from '@react-three/drei';
@@ -503,6 +503,7 @@ export default function LiveStudio() {
             <div 
               key={comment.id}
               className={`p-3 rounded-lg border text-sm transition-colors animate-slide-up ${
+                comment.isGift ? 'bg-pink-500/20 border-pink-500/50 text-pink-100 shadow-[0_0_15px_rgba(236,72,153,0.2)]' :
                 comment.state === 'answered' ? 'bg-green-500/10 border-green-500/20 text-green-100' :
                 comment.state === 'processing' ? 'bg-yellow-500/10 border-yellow-500/20 text-yellow-100' :
                 comment.state === 'skipped' ? 'bg-neutral-800/50 border-transparent text-neutral-500' :
@@ -513,8 +514,13 @@ export default function LiveStudio() {
             >
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold opacity-75 text-blue-400">@{comment.username}</span>
-                  {comment.priorityScore > 2 && comment.state === 'pending' && (
+                  <span className={`font-semibold opacity-75 ${comment.isGift ? 'text-pink-400' : 'text-blue-400'}`}>@{comment.username}</span>
+                  {comment.isGift && (
+                    <span className="text-[10px] uppercase tracking-wider text-pink-400 font-bold px-1.5 py-0.5 rounded bg-pink-500/20 flex items-center gap-1">
+                      <Gift className="w-3 h-3" /> GIFT
+                    </span>
+                  )}
+                  {!comment.isGift && comment.priorityScore > 2 && comment.state === 'pending' && (
                     <span className="text-[10px] uppercase tracking-wider text-blue-400 font-bold px-1.5 py-0.5 rounded bg-blue-500/10">Priority</span>
                   )}
                 </div>

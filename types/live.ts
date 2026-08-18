@@ -8,6 +8,7 @@ export interface LiveComment {
   timestamp: number;
   priorityScore: number;
   state: CommentState;
+  isGift?: boolean;
 }
 
 export interface LiveProvider {

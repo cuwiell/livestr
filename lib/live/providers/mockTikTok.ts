@@ -58,15 +58,30 @@ export class MockTikTokProvider implements LiveProvider {
       if (this.state !== 'LIVE') return;
 
       if (this.onCommentCallback) {
-        const text = MOCK_COMMENTS[Math.floor(Math.random() * MOCK_COMMENTS.length)];
-        const user = MOCK_USERS[Math.floor(Math.random() * MOCK_USERS.length)];
+        this.commentCount++;
         
-        this.onCommentCallback({
-          id: `mock-${this.commentCount++}-${Date.now()}`,
-          username: user,
-          content: text,
-          timestamp: Date.now(),
-        });
+        // Every 5th interaction is a gift
+        const isGift = this.commentCount % 5 === 0;
+        
+        if (isGift) {
+          const gifts = ["Mawar", "Kopi", "Singa", "TikTok Universe"];
+          const gift = gifts[Math.floor(Math.random() * gifts.length)];
+          const count = Math.floor(Math.random() * 5) + 1;
+          this.onCommentCallback({
+            id: `mock_gift_${Date.now()}`,
+            username: MOCK_USERS[Math.floor(Math.random() * MOCK_USERS.length)],
+            content: `[GIFT] mengirimkan ${count}x ${gift}!`,
+            timestamp: Date.now(),
+            isGift: true
+          });
+        } else {
+          this.onCommentCallback({
+            id: `mock_${Date.now()}`,
+            username: MOCK_USERS[Math.floor(Math.random() * MOCK_USERS.length)],
+            content: MOCK_COMMENTS[Math.floor(Math.random() * MOCK_COMMENTS.length)],
+            timestamp: Date.now(),
+          });
+        }
       }
 
       // Schedule next comment

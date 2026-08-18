@@ -44,6 +44,33 @@ export async function GET(req: NextRequest) {
         });
 
         // @ts-ignore
+        tiktokLiveConnection.on('gift', (data: any) => {
+          // If it's not a streak gift, or if it is the end of a streak
+          if (data.giftType === 1 && !data.repeatEnd) {
+            return; // Ignore intermediate streak gifts to avoid spam
+          }
+          const username = data.uniqueId || data.user?.displayId || data.user?.uniqueId || data.user?.nickname || 'unknown';
+          const giftName = data.giftName || 'Gift';
+          const repeatCount = data.repeatCount || 1;
+          const msgId = data.msgId || data.common?.msgId || Date.now().toString();
+          
+          console.log(`[TikTok] Gift received: @${username} sent ${repeatCount}x ${giftName}`);
+          const payload = {
+            type: 'chat', // Treat it as chat to pass through easily
+            comment: {
+              id: 'gift_' + msgId,
+              username: username,
+              content: `[GIFT] mengirimkan ${repeatCount}x ${giftName}!`,
+              timestamp: Date.now(),
+              isGift: true
+            }
+          };
+          try {
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(payload)}\n\n`));
+          } catch (e) {}
+        });
+
+        // @ts-ignore
         tiktokLiveConnection.on('error', (err: any) => {
           console.error('TikTok Live Connection Error Event:', err);
           try {
