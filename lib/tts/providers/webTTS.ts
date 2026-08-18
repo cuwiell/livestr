@@ -48,8 +48,13 @@ export class WebTTSProvider implements TTSProvider {
       this.currentUtterance = new SpeechSynthesisUtterance(text);
 
       // Try to find a matching voice if requested
-      if (options?.language) {
-        // e.g. 'id-ID' or 'en-US'
+      if (options?.voiceId) {
+        const exactVoice = this.voices.find(v => v.voiceURI === options.voiceId);
+        if (exactVoice) {
+          this.currentUtterance.voice = exactVoice;
+        }
+      } else if (options?.language) {
+        // Fallback to language matching
         const voice = this.voices.find(v => v.lang.includes(options.language as string));
         if (voice) {
           this.currentUtterance.voice = voice;

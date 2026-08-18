@@ -154,8 +154,10 @@ export default function LiveStudio() {
           // Push text to Audio Queue for TTS playback
           if (audioQueueRef.current) {
             audioQueueRef.current.add(next.id, data.data.text, {
+              voiceId: host?.voice.voiceId,
               language: host?.language,
-              speed: 1.0,
+              speed: host?.voice.speed || 1.0,
+              pitch: host?.voice.pitch || 1.0,
             });
           }
 
