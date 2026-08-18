@@ -164,11 +164,29 @@ export default function LiveStudio() {
         } else {
           throw new Error(data.error);
         }
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('AI Error:', err);
+        const errMsg = err instanceof Error ? err.message : 'Unknown error';
         queueRef.current.markState(next.id, 'skipped');
         updateCommentState(next.id, 'skipped');
+        
+        // Show error to user so they know why it failed
+        const friendlyError = errMsg.includes('insufficient_quota') || errMsg.includes('429') 
+          ? "Maaf, OpenAI API Key Anda kehabisan saldo atau limit. Silakan cek billing Anda."
+          : `Sistem AI sedang bermasalah: ${errMsg.slice(0, 50)}`;
+          
+        setAiResponse(friendlyError);
         setAiThinking(false);
+        
+        // Let the host say the error
+        if (audioQueueRef.current) {
+          audioQueueRef.current.add(next.id + '_err', friendlyError, {
+            voiceId: host?.voice.voiceId,
+            language: host?.language,
+            speed: host?.voice.speed || 1.0,
+            pitch: host?.voice.pitch || 1.0,
+          });
+        }
       }
     };
 
