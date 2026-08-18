@@ -8,10 +8,12 @@ export default function SettingsPage() {
   const [status, setStatus] = useState({
     hasFirebaseKey: false,
     hasOpenAIKey: false,
+    hasGeminiKey: false,
     loading: true
   });
   const [saving, setSaving] = useState(false);
   const [openAiKeyInput, setOpenAiKeyInput] = useState('');
+  const [geminiKeyInput, setGeminiKeyInput] = useState('');
   
   // Firebase Inputs
   const [fbConfig, setFbConfig] = useState({
@@ -27,6 +29,7 @@ export default function SettingsPage() {
       setStatus({
         hasFirebaseKey: data.hasFirebaseKey,
         hasOpenAIKey: data.hasOpenAIKey,
+        hasGeminiKey: data.hasGeminiKey,
         loading: false
       });
     } catch (e) {
@@ -64,6 +67,20 @@ export default function SettingsPage() {
     fetchStatus();
     setOpenAiKeyInput('');
     alert('OpenAI Key saved! Next.js will reload it automatically.');
+  };
+
+  const handleSaveGemini = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    await fetch('/api/settings/env', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ geminiKey: geminiKeyInput })
+    });
+    setSaving(false);
+    fetchStatus();
+    setGeminiKeyInput('');
+    alert('Gemini Key saved! Next.js will reload it automatically.');
   };
 
   if (status.loading) return <div className="p-8 text-neutral-400 flex items-center gap-2"><Loader2 className="animate-spin h-5 w-5" /> Checking connections...</div>;
@@ -175,6 +192,44 @@ export default function SettingsPage() {
               <p className="text-sm text-neutral-300 mb-4">You can still use the "Mock Provider" for testing, but to use real AI, you need an OpenAI API Key starting with <code className="bg-neutral-900 px-1 rounded text-pink-400">sk-...</code>.</p>
               <form onSubmit={handleSaveOpenAI} className="flex gap-4">
                 <input required type="password" placeholder="sk-..." className="flex-1 p-3 bg-neutral-900 border border-neutral-700 rounded-lg text-white" value={openAiKeyInput} onChange={e => setOpenAiKeyInput(e.target.value)} />
+                <button disabled={saving} type="submit" className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition disabled:opacity-50">
+                  Save Key
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
+
+        {/* Gemini Card */}
+        <div className="rounded-2xl border border-neutral-800 bg-neutral-900/40 p-6 glass-panel relative overflow-hidden mt-6">
+          <div className={`absolute top-0 left-0 w-1 h-full ${status.hasGeminiKey ? 'bg-green-500' : 'bg-red-500'}`}></div>
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className={`p-3 rounded-xl ${status.hasGeminiKey ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                <BrainCircuit className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Google Gemini Connection</h2>
+                <p className="text-sm text-neutral-400">A completely FREE alternative to OpenAI for generating AI responses.</p>
+              </div>
+            </div>
+            {status.hasGeminiKey ? (
+              <span className="flex items-center gap-2 text-sm font-medium text-green-500 bg-green-500/10 px-3 py-1 rounded-full">
+                <CheckCircle2 className="h-4 w-4" /> Connected
+              </span>
+            ) : (
+              <span className="flex items-center gap-2 text-sm font-medium text-red-500 bg-red-500/10 px-3 py-1 rounded-full">
+                <XCircle className="h-4 w-4" /> Missing
+              </span>
+            )}
+          </div>
+
+          {!status.hasGeminiKey && (
+            <div className="mt-4 p-4 rounded-xl bg-neutral-800/50 border border-neutral-700">
+              <h3 className="font-semibold text-white mb-2">How to connect:</h3>
+              <p className="text-sm text-neutral-300 mb-4">You can get a free API Key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-blue-400 hover:underline">Google AI Studio</a>.</p>
+              <form onSubmit={handleSaveGemini} className="flex gap-4">
+                <input required type="password" placeholder="AIzaSy..." className="flex-1 p-3 bg-neutral-900 border border-neutral-700 rounded-lg text-white" value={geminiKeyInput} onChange={e => setGeminiKeyInput(e.target.value)} />
                 <button disabled={saving} type="submit" className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition disabled:opacity-50">
                   Save Key
                 </button>

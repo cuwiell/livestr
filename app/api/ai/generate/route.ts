@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { MockAIProvider } from '@/lib/ai/providers/mock';
 import { OpenAIProvider } from '@/lib/ai/providers/openai';
+import { GeminiProvider } from '@/lib/ai/providers/gemini';
 import { ConversationEngine } from '@/lib/ai/conversationEngine';
 
 export async function POST(req: Request) {
@@ -19,6 +20,8 @@ export async function POST(req: Request) {
     let provider;
     if (providerName === 'openai' && process.env.OPENAI_API_KEY) {
       provider = new OpenAIProvider();
+    } else if (providerName === 'gemini' && process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+      provider = new GeminiProvider();
     } else {
       // Fallback to mock for development/MVP
       provider = new MockAIProvider();
@@ -28,11 +31,15 @@ export async function POST(req: Request) {
     
     const responseText = await engine.getResponse(currentComment, history || [], username);
 
+    let actualProvider = 'mock';
+    if (providerName === 'openai' && process.env.OPENAI_API_KEY) actualProvider = 'openai';
+    if (providerName === 'gemini' && process.env.GOOGLE_GENERATIVE_AI_API_KEY) actualProvider = 'gemini';
+
     return NextResponse.json({
       success: true,
       data: {
         text: responseText,
-        provider: providerName === 'openai' && process.env.OPENAI_API_KEY ? 'openai' : 'mock'
+        provider: actualProvider
       }
     });
 

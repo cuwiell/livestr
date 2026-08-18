@@ -14,11 +14,13 @@ export async function GET() {
 
   const hasFirebaseKey = /NEXT_PUBLIC_FIREBASE_API_KEY=([^ \n]+)/.test(envContent);
   const hasOpenAIKey = /OPENAI_API_KEY=([^ \n]+)/.test(envContent);
+  const hasGeminiKey = /GOOGLE_GENERATIVE_AI_API_KEY=([^ \n]+)/.test(envContent);
 
   return NextResponse.json({
     hasEnvFile,
     hasFirebaseKey,
     hasOpenAIKey,
+    hasGeminiKey,
   });
 }
 
@@ -56,6 +58,11 @@ export async function POST(request: Request) {
     // Process OpenAI
     if (data.openaiKey) {
       updateOrAppend('OPENAI_API_KEY', data.openaiKey);
+    }
+
+    // Process Gemini
+    if (data.geminiKey) {
+      updateOrAppend('GOOGLE_GENERATIVE_AI_API_KEY', data.geminiKey);
     }
 
     // Clean up empty lines

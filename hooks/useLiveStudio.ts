@@ -20,7 +20,7 @@ interface LiveStudioState {
   // Actions
   setHost: (host: Host) => void;
   setStatus: (status: LiveState) => void;
-  setProvider: (provider: 'mock' | 'openai') => void;
+  setProvider: (provider: 'mock' | 'openai' | 'gemini') => void;
   
   addComment: (comment: LiveComment) => void;
   updateCommentState: (id: string, state: LiveComment['state']) => void;

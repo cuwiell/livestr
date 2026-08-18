@@ -322,10 +322,11 @@ export default function LiveStudio() {
               <select
                 className="w-full rounded-xl border border-neutral-700 bg-neutral-800 p-3 text-white focus:border-blue-500 focus:outline-none"
                 value={provider}
-                onChange={(e) => setProvider(e.target.value as 'mock' | 'openai')}
+                onChange={(e) => setProvider(e.target.value as 'mock' | 'openai' | 'gemini')}
               >
-                <option value="mock">Mock Provider (Fast/Free)</option>
-                <option value="openai">OpenAI</option>
+                <option value="mock">Mock Provider (Fast/Testing)</option>
+                <option value="openai">OpenAI (Butuh API Key & Saldo)</option>
+                <option value="gemini">Google Gemini (Gratis 100%)</option>
               </select>
             </div>
 
