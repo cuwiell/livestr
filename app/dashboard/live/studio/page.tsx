@@ -7,9 +7,12 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { Host } from '@/types/host';
 import { useLiveStudio } from '@/hooks/useLiveStudio';
 import { CommentQueue } from '@/lib/live/commentQueue';
+import { OpenAIProvider } from '@/lib/ai/providers/openai';
+import { GeminiProvider } from '@/lib/ai/providers/gemini';
 import { MockTikTokProvider } from '@/lib/live/providers/mockTikTok';
 import { RealTikTokProvider } from '@/lib/live/providers/realTikTok';
 import { WebTTSProvider } from '@/lib/tts/providers/webTTS';
+import { GoogleTTSProvider } from '@/lib/tts/providers/googleTTS';
 import { LiveProvider } from '@/types/live';
 import { AudioQueue } from '@/lib/tts/audioQueue';
 import { Settings2, Square, Radio, Volume2, VolumeX, Gift } from 'lucide-react';
@@ -238,8 +241,11 @@ export default function LiveStudio() {
       providerRef.current = new MockTikTokProvider();
     }
     
-    // Setup Audio Queue
-    const ttsProvider = new WebTTSProvider();
+    // Setup Audio Queue using selected provider
+    const ttsProvider = selected.voice.provider === 'googleTTS' 
+      ? new GoogleTTSProvider() 
+      : new WebTTSProvider();
+      
     audioQueueRef.current = new AudioQueue(ttsProvider);
     audioQueueRef.current.setCallbacks(
       (id, text) => {

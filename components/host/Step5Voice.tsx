@@ -85,6 +85,16 @@ export function Step5Voice() {
         {voices.length === 0 ? (
           <p className="text-sm text-yellow-500 p-3 bg-yellow-500/10 rounded-lg">Loading voices... (Jika tidak muncul, browser Anda mungkin tidak mendukung fitur ini).</p>
         ) : (
+          <>
+          <select 
+            value={hostData.voice.provider} 
+            onChange={(e) => updateNestedData('voice', { provider: e.target.value })}
+            className="w-full bg-neutral-900 border border-neutral-700 rounded-lg px-4 py-2 text-neutral-200 mb-4"
+          >
+            <option value="googleTTS">Google Translate Voice (Paling Stabil & Gratis)</option>
+            <option value="webTTS">Native Browser Voice (Sering Bug di Chrome)</option>
+            <option value="elevenlabs" disabled>ElevenLabs (Pro - Coming Soon)</option>
+          </select>
           <select
             value={hostData.voice.voiceId}
             onChange={(e) => updateNestedData('voice', { voiceId: e.target.value, provider: 'web' })}
@@ -96,6 +106,7 @@ export function Step5Voice() {
               </option>
             ))}
           </select>
+          </>
         )}
         <p className="text-xs text-neutral-500 mt-2">
           Saran: Gunakan browser <strong>Microsoft Edge</strong> untuk mendapatkan suara "Microsoft Natural" atau <strong>Google Chrome</strong> untuk suara "Google Translate" yang terdengar seperti manusia asli.
