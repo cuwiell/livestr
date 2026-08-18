@@ -511,44 +511,55 @@ export default function LiveStudio() {
           <span className="text-xs text-neutral-400">{comments.length} received</span>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div className="flex-1 overflow-y-auto p-4 space-y-1">
           {comments.map((comment, index) => (
             <div 
               key={comment.id}
-              className={`p-3 rounded-lg border text-sm transition-colors animate-slide-up ${
-                comment.isGift ? 'bg-pink-500/20 border-pink-500/50 text-pink-100 shadow-[0_0_15px_rgba(236,72,153,0.2)]' :
-                comment.state === 'answered' ? 'bg-green-500/10 border-green-500/20 text-green-100' :
-                comment.state === 'processing' ? 'bg-yellow-500/10 border-yellow-500/20 text-yellow-100' :
-                comment.state === 'skipped' ? 'bg-neutral-800/50 border-transparent text-neutral-500' :
-                (comment.priorityScore > 2) ? 'bg-blue-500/10 border-blue-500/30 text-blue-100 shadow-[0_0_10px_rgba(59,130,246,0.1)]' :
-                'bg-neutral-800/30 border-transparent text-neutral-300'
+              className={`py-1.5 px-3 text-[14px] leading-relaxed transition-colors animate-slide-up ${
+                comment.isGift ? 'bg-pink-500/20 rounded-xl my-1 border border-pink-500/30 shadow-[0_0_15px_rgba(236,72,153,0.15)]' :
+                comment.state === 'answered' ? 'bg-green-500/10 rounded-lg' :
+                comment.state === 'processing' ? 'bg-yellow-500/10 rounded-lg' :
+                comment.state === 'skipped' ? 'opacity-50' :
+                (comment.priorityScore > 2) ? 'bg-blue-500/10 rounded-lg' :
+                'bg-transparent'
               }`}
               style={{ animationDelay: `${Math.min(index * 50, 300)}ms` }}
             >
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2">
-                  <span className={`font-semibold opacity-75 ${comment.isGift ? 'text-pink-400' : 'text-blue-400'}`}>@{comment.username}</span>
-                  {comment.isGift && (
-                    <span className="text-[10px] uppercase tracking-wider text-pink-400 font-bold px-1.5 py-0.5 rounded bg-pink-500/20 flex items-center gap-1">
-                      <Gift className="w-3 h-3" /> GIFT
+              <div className="inline-block w-full">
+                <span 
+                  className={`font-semibold mr-2 drop-shadow-sm ${comment.isGift ? 'text-pink-300' : 'text-neutral-300'}`}
+                >
+                  {comment.username}
+                </span>
+                
+                {comment.isGift && (
+                  <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-white font-bold px-1.5 py-0.5 rounded-full bg-pink-500 mr-2 align-middle">
+                    <Gift className="w-3 h-3" /> GIFT
+                  </span>
+                )}
+                
+                <span 
+                  className={`break-words ${comment.isGift ? 'font-bold text-pink-100' : 'text-white'}`} 
+                  style={{ textShadow: '0px 1px 2px rgba(0,0,0,0.8)' }}
+                >
+                  {comment.content}
+                </span>
+
+                {/* Status Badges - Float right or inline end */}
+                <span className="inline-flex ml-2 align-middle gap-1 opacity-70">
+                  {comment.priorityScore > 0 && !comment.isGift && (
+                    <span className="text-[10px] text-orange-400">★{comment.priorityScore}</span>
+                  )}
+                  {comment.state !== 'pending' && (
+                    <span className={`text-[10px] uppercase tracking-wider ${
+                      comment.state === 'processing' ? 'text-yellow-400' :
+                      comment.state === 'answered' ? 'text-green-400' : 'text-neutral-500'
+                    }`}>
+                      • {comment.state}
                     </span>
                   )}
-                  {!comment.isGift && comment.priorityScore > 2 && comment.state === 'pending' && (
-                    <span className="text-[10px] uppercase tracking-wider text-blue-400 font-bold px-1.5 py-0.5 rounded bg-blue-500/10">Priority</span>
-                  )}
-                </div>
-                <div className="flex gap-2 text-xs">
-                  {comment.priorityScore > 0 && (
-                     <span className="text-orange-400">★ {comment.priorityScore}</span>
-                  )}
-                  <span className={
-                    comment.state === 'pending' ? 'text-neutral-400' :
-                    comment.state === 'processing' ? 'text-yellow-500' :
-                    comment.state === 'answered' ? 'text-green-500' : 'text-neutral-500'
-                  }>{comment.state}</span>
-                </div>
+                </span>
               </div>
-              <p className="text-neutral-200">{comment.content}</p>
             </div>
           ))}
           {comments.length === 0 && (
