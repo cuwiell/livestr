@@ -21,13 +21,17 @@ export async function GET(req: NextRequest) {
         // Setup events before connecting
         // @ts-ignore
         tiktokLiveConnection.on('chat', (data: any) => {
-          console.log(`[TikTok] Chat received from ${data.uniqueId}`);
+          const username = data.uniqueId || data.user?.displayId || data.user?.uniqueId || data.user?.nickname || 'unknown';
+          const content = data.comment || data.content || '';
+          const msgId = data.msgId || data.common?.msgId || Date.now().toString();
+          
+          console.log(`[TikTok] Chat parsed: @${username}: ${content}`);
           const payload = {
             type: 'chat',
             comment: {
-              id: data.msgId,
-              username: data.uniqueId,
-              content: data.comment || '',
+              id: msgId,
+              username: username,
+              content: content,
               timestamp: Date.now(),
             }
           };
