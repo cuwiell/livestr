@@ -16,15 +16,12 @@ export async function GET(req: NextRequest) {
       let tiktokLiveConnection: TikTokLiveConnection | null = null;
 
       try {
-        tiktokLiveConnection = new TikTokLiveConnection(username, {
-          processInitialData: true,
-          enableExtendedGiftInfo: false,
-          requestPollingIntervalMs: 2000,
-        } as any);
+        tiktokLiveConnection = new TikTokLiveConnection(username);
 
         // Setup events before connecting
         // @ts-ignore
         tiktokLiveConnection.on('chat', (data: any) => {
+          console.log(`[TikTok] Chat received from ${data.uniqueId}`);
           const payload = {
             type: 'chat',
             comment: {
@@ -37,13 +34,14 @@ export async function GET(req: NextRequest) {
           try {
             controller.enqueue(encoder.encode(`data: ${JSON.stringify(payload)}\n\n`));
           } catch (e) {
+            console.error('Failed to enqueue chat data', e);
             tiktokLiveConnection?.disconnect();
           }
         });
 
         // @ts-ignore
         tiktokLiveConnection.on('error', (err: any) => {
-          console.error('TikTok Live Connection Error:', err);
+          console.error('TikTok Live Connection Error Event:', err);
           try {
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'error', message: err.message })}\n\n`));
           } catch (e) {}
@@ -51,6 +49,7 @@ export async function GET(req: NextRequest) {
 
         // @ts-ignore
         tiktokLiveConnection.on('disconnected', () => {
+          console.log('[TikTok] Disconnected event fired');
           try {
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'disconnected' })}\n\n`));
             controller.close();
@@ -58,7 +57,9 @@ export async function GET(req: NextRequest) {
         });
 
         // Connect
+        console.log(`[TikTok] Attempting to connect to ${username}...`);
         await tiktokLiveConnection.connect();
+        console.log(`[TikTok] Successfully connected to ${username}`);
         
         try {
           controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'connected', username })}\n\n`));
