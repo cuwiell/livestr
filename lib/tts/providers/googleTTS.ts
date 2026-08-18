@@ -13,8 +13,8 @@ export class GoogleTTSProvider implements TTSProvider {
   async speak(text: string, options?: TTSOptions): Promise<void> {
     if (!this.audio) return Promise.resolve();
 
-    this.isStopped = false;
     this.stop(); // Stop any existing speech
+    this.isStopped = false;
 
     // Split text into 200-character chunks (Google Translate TTS limit)
     const chunks = text.match(/.{1,200}(?:\s|$)/g) || [text];

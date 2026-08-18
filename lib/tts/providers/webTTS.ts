@@ -33,8 +33,8 @@ export class WebTTSProvider implements TTSProvider {
       return Promise.resolve();
     }
 
-    this.isStopped = false;
     this.stop(); // Stop any existing speech
+    this.isStopped = false;
     
     // Chunk text by sentences to prevent Chrome's SpeechSynthesisError for long texts (>250 chars)
     const chunks = text.match(/[^.!?]+[.!?]*/g) || [text];
