@@ -50,6 +50,9 @@ export const useLiveStudio = create<LiveStudioState>((set) => ({
   setProvider: (provider) => set({ provider }),
   
   addComment: (comment) => set((state) => {
+    // Prevent duplicate keys
+    if (state.comments.some(c => c.id === comment.id)) return state;
+    
     // Keep max 100 comments in UI memory to prevent lag
     const newComments = [...state.comments, comment];
     if (newComments.length > 100) newComments.shift();

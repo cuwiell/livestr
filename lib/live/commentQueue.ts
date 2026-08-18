@@ -14,6 +14,12 @@ export class CommentQueue {
    */
   addComment(rawComment: Omit<LiveComment, 'priorityScore' | 'state'>) {
     if (!rawComment || !rawComment.content) return;
+    
+    // Prevent exact duplicate IDs from polling overlap
+    if (this.queue.some(c => c.id === rawComment.id)) {
+      return;
+    }
+
     const normalized = String(rawComment.content).trim().toLowerCase();
     
     // Duplicate Detection (drop if exactly same as last 5)
