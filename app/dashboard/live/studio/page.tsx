@@ -110,6 +110,8 @@ export default function LiveStudio() {
     return () => clearInterval(flapInterval);
   }, [isAiSpeaking, host?.avatarUrlSpeaking]);
 
+  const lastProcessTimeRef = useRef<number>(0);
+
   // 2. The Main AI Loop (Processing the queue)
   useEffect(() => {
     if (status !== 'LIVE') {
@@ -120,10 +122,15 @@ export default function LiveStudio() {
     const processNextComment = async () => {
       // Wait if AI is busy thinking or currently speaking audio
       if (isAiThinking || isAiSpeaking) return; 
+      
+      // Enforce a minimum 5-second cooldown between AI requests to prevent Free Tier Rate Limits
+      const now = Date.now();
+      if (now - lastProcessTimeRef.current < 5000) return;
 
       const next = queueRef.current.getNextComment();
       if (!next) return; // Queue empty
 
+      lastProcessTimeRef.current = now;
       updateCommentState(next.id, 'processing');
       setAiThinking(true);
 
@@ -171,12 +178,16 @@ export default function LiveStudio() {
         updateCommentState(next.id, 'skipped');
         
         // Show error to user so they know why it failed
-        const friendlyError = errMsg.includes('insufficient_quota') || errMsg.includes('429') 
-          ? "Maaf, OpenAI API Key Anda kehabisan saldo atau limit. Silakan cek billing Anda."
-          : `Sistem AI sedang bermasalah: ${errMsg.slice(0, 50)}`;
+        const isQuotaError = errMsg.toLowerCase().includes('quota') || errMsg.includes('429') || errMsg.includes('insufficient');
+        const friendlyError = isQuotaError 
+          ? "Maaf, API Key AI Anda kehabisan limit penggunaan gratis. Mohon tunggu beberapa detik."
+          : `Sistem AI bermasalah: ${errMsg.slice(0, 50)}`;
           
         setAiResponse(friendlyError);
         setAiThinking(false);
+        
+        // Push 10s penalty cooldown to prevent spamming blocked API
+        lastProcessTimeRef.current = Date.now() + 10000;
         
         // Let the host say the error
         if (audioQueueRef.current) {
