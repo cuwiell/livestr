@@ -31,6 +31,9 @@ export default function LiveStudio() {
     setAiResponse, setAiThinking, setAiSpeaking, setTtsMuted, addHistoryItem, reset
   } = useLiveStudio();
 
+  // PNGTuber flapping state
+  const [isMouthOpen, setIsMouthOpen] = useState(false);
+
   // Keep instances in refs so they persist across renders
   const queueRef = useRef(new CommentQueue(20));
   const providerRef = useRef<LiveProvider | null>(null);
@@ -83,6 +86,19 @@ export default function LiveStudio() {
       reset();
     };
   }, [user, reset]);
+
+  // 1.5. PNGTuber Flapping Effect
+  useEffect(() => {
+    let flapInterval: NodeJS.Timeout;
+    if (isAiSpeaking && host?.avatarUrlSpeaking) {
+      flapInterval = setInterval(() => {
+        setIsMouthOpen(prev => !prev);
+      }, 150 + Math.random() * 50); // Randomize slightly for natural look
+    } else {
+      setIsMouthOpen(false);
+    }
+    return () => clearInterval(flapInterval);
+  }, [isAiSpeaking, host?.avatarUrlSpeaking]);
 
   // 2. The Main AI Loop (Processing the queue)
   useEffect(() => {
@@ -372,7 +388,14 @@ export default function LiveStudio() {
               (host.avatarUrl.toLowerCase().endsWith('.mp4') || host.avatarUrl.toLowerCase().endsWith('.webm')) ? (
                 <video src={host.avatarUrl} autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : (
-                <img src={host.avatarUrl} alt="Host Avatar" className={clsx("w-full h-full object-cover transition-transform duration-700", isAiSpeaking && "scale-105")} />
+                <img 
+                  src={(isMouthOpen && host.avatarUrlSpeaking) ? host.avatarUrlSpeaking : host.avatarUrl} 
+                  alt="Host Avatar" 
+                  className={clsx("w-full h-full object-cover transition-transform duration-300", isAiSpeaking && !host.avatarUrlSpeaking && "scale-105")} 
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/400x700?text=Invalid+Image+URL';
+                  }}
+                />
               )
             ) : (
               <div className="w-full h-full bg-neutral-900 flex items-center justify-center text-neutral-600">

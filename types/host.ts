@@ -39,8 +39,9 @@ export interface Host {
   age: string;
   language: string;
   
-  avatarType: string;
   avatarUrl: string;
+  avatarUrlSpeaking?: string; // For PNGTuber style (mouth open)
+  avatarType: 'css' | 'url' | 'dalle';
   
   personality: HostPersonality;
   speakingStyle: HostSpeakingStyle;

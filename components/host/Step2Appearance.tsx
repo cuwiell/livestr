@@ -81,10 +81,10 @@ export function Step2Appearance() {
           {tab === 'url' ? (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-300 mb-2">Media URL (.jpg, .png, .mp4)</label>
+                <label className="block text-sm font-medium text-neutral-300 mb-2">Idle Avatar URL (Mouth Closed)</label>
                 <input
                   type="url"
-                  placeholder="https://example.com/image.jpg"
+                  placeholder="https://example.com/idle.jpg"
                   value={inputUrl}
                   onChange={(e) => {
                     setInputUrl(e.target.value);
@@ -95,14 +95,28 @@ export function Step2Appearance() {
                       updateData({ avatarUrl: inputUrl, avatarType: 'url' });
                     }
                   }}
+                  className="w-full rounded-xl border border-neutral-700 bg-neutral-800 p-3 text-white focus:border-blue-500 focus:outline-none placeholder-neutral-600 mb-2"
+                />
+              </div>
+
+              <div className="pt-2 border-t border-neutral-800">
+                <label className="block text-sm font-medium text-neutral-300 mb-2">Speaking Avatar URL (Mouth Open) - Optional</label>
+                <input
+                  type="url"
+                  placeholder="https://example.com/speaking.jpg"
+                  value={hostData.avatarUrlSpeaking || ''}
+                  onChange={(e) => {
+                    updateData({ avatarUrlSpeaking: e.target.value });
+                  }}
                   className="w-full rounded-xl border border-neutral-700 bg-neutral-800 p-3 text-white focus:border-blue-500 focus:outline-none placeholder-neutral-600"
                 />
-                <p className="mt-2 text-xs text-neutral-500">Paste a direct link to an image or video.</p>
+                <p className="mt-2 text-xs text-neutral-500">Provide a second image to create a PNGTuber talking effect.</p>
               </div>
+
               <button
                 onClick={handleSaveUrl}
                 disabled={!inputUrl}
-                className="rounded-lg bg-white px-4 py-2 font-medium text-black transition hover:bg-neutral-200 disabled:opacity-50"
+                className="rounded-lg bg-white px-4 py-2 font-medium text-black transition hover:bg-neutral-200 disabled:opacity-50 mt-4"
               >
                 Apply Media
               </button>
