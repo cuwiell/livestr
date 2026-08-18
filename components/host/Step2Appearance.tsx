@@ -130,7 +130,7 @@ export function Step2Appearance() {
                 Apply Media
               </button>
             </div>
-          ) : (
+          ) : tab === 'generate' ? (
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-neutral-300 mb-2">Describe Your Character</label>
