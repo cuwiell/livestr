@@ -19,12 +19,12 @@ export async function GET(req: NextRequest) {
         tiktokLiveConnection = new TikTokLiveConnection(username, {
           processInitialData: true,
           enableExtendedGiftInfo: false,
-          enableWebsocketUpgrade: false,
           requestPollingIntervalMs: 2000,
-        });
+        } as any);
 
         // Setup events before connecting
-        tiktokLiveConnection.on('chat', (data) => {
+        // @ts-ignore
+        tiktokLiveConnection.on('chat', (data: any) => {
           const payload = {
             type: 'chat',
             comment: {
@@ -41,13 +41,15 @@ export async function GET(req: NextRequest) {
           }
         });
 
-        tiktokLiveConnection.on('error', (err) => {
+        // @ts-ignore
+        tiktokLiveConnection.on('error', (err: any) => {
           console.error('TikTok Live Connection Error:', err);
           try {
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'error', message: err.message })}\n\n`));
           } catch (e) {}
         });
 
+        // @ts-ignore
         tiktokLiveConnection.on('disconnected', () => {
           try {
             controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'disconnected' })}\n\n`));

@@ -317,10 +317,9 @@ export default function LiveStudio() {
 
             <button
               onClick={handleStartLive}
-              disabled={status === 'CONNECTING'}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 p-4 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-blue-600 p-4 font-semibold text-white transition hover:bg-blue-700"
             >
-              <Radio className="h-5 w-5" /> {status === 'CONNECTING' ? 'CONNECTING...' : 'GO LIVE'}
+              <Radio className="h-5 w-5" /> GO LIVE
             </button>
             {status === 'ENDED' && <p className="text-center text-sm text-green-500">Live session ended successfully.</p>}
           </div>
