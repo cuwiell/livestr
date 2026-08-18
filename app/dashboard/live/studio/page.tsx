@@ -12,8 +12,8 @@ import { RealTikTokProvider } from '@/lib/live/providers/realTikTok';
 import { WebTTSProvider } from '@/lib/tts/providers/webTTS';
 import { LiveProvider } from '@/types/live';
 import { AudioQueue } from '@/lib/tts/audioQueue';
-import { CSSAvatar, AvatarState, AvatarEmotion } from '@/components/avatar/CSSAvatar';
 import { Settings2, Square, Radio, Volume2, VolumeX } from 'lucide-react';
+import clsx from 'clsx';
 
 export default function LiveStudio() {
   const { user } = useAuth();
@@ -360,18 +360,40 @@ export default function LiveStudio() {
         </div>
 
         {/* Avatar Visualizer */}
-        <div className="flex-1 flex flex-col items-center justify-center p-8 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-800 to-neutral-950">
+        <div className="flex-1 flex flex-col items-center justify-center py-6 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-800 to-neutral-950 relative overflow-hidden">
           
-          <CSSAvatar 
-            state={isAiThinking ? 'thinking' : isAiSpeaking ? 'speaking' : 'idle'}
-            emotion={(host?.speakingStyle.emotion as AvatarEmotion) || 'neutral'}
-          />
+          <div className={clsx(
+            "relative w-full max-w-[400px] aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl transition-all duration-500",
+            isAiThinking ? "border-4 border-yellow-500 shadow-[0_0_50px_rgba(234,179,8,0.3)]" :
+            isAiSpeaking ? "border-4 border-blue-500 shadow-[0_0_50px_rgba(59,130,246,0.4)] scale-[1.02]" :
+            "border-4 border-neutral-700 shadow-xl"
+          )}>
+            {host?.avatarUrl ? (
+              (host.avatarUrl.toLowerCase().endsWith('.mp4') || host.avatarUrl.toLowerCase().endsWith('.webm')) ? (
+                <video src={host.avatarUrl} autoPlay loop muted playsInline className="w-full h-full object-cover" />
+              ) : (
+                <img src={host.avatarUrl} alt="Host Avatar" className={clsx("w-full h-full object-cover transition-transform duration-700", isAiSpeaking && "scale-105")} />
+              )
+            ) : (
+              <div className="w-full h-full bg-neutral-900 flex items-center justify-center text-neutral-600">
+                <span>No Media Configured</span>
+              </div>
+            )}
 
-          <div className="mt-12 text-center h-20">
-             {isAiThinking && <p className="text-yellow-500 animate-pulse">Thinking...</p>}
-             {isAiSpeaking && <p className="text-blue-400 font-medium animate-pulse">Speaking...</p>}
-             {!isAiThinking && !isAiSpeaking && <p className="text-neutral-500">Idle</p>}
+            {/* Status Overlay Badge */}
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2">
+              <span className={clsx(
+                "w-2 h-2 rounded-full",
+                isAiThinking ? "bg-yellow-500 animate-pulse" :
+                isAiSpeaking ? "bg-blue-500 animate-ping" :
+                "bg-neutral-500"
+              )}></span>
+              <span className="text-xs font-medium text-white uppercase tracking-wider">
+                {isAiThinking ? 'Thinking' : isAiSpeaking ? 'Speaking' : 'Idle'}
+              </span>
+            </div>
           </div>
+
         </div>
 
         {/* Left Sidebar - Stream Info & Config */}
