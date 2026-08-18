@@ -471,7 +471,7 @@ export default function LiveStudio() {
             )}
 
             {/* Status Overlay Badge */}
-            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2">
+            <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2 z-20">
               <span className={clsx(
                 "w-2 h-2 rounded-full",
                 isAiThinking ? "bg-yellow-500 animate-pulse" :
@@ -482,89 +482,56 @@ export default function LiveStudio() {
                 {isAiThinking ? 'Thinking' : isAiSpeaking ? 'Speaking' : 'Idle'}
               </span>
             </div>
-          </div>
 
-        </div>
-
-        {/* Left Sidebar - Stream Info & Config */}
-        <div className="w-80 border-r border-neutral-800 glass-panel flex flex-col z-10">
-          <div className="p-4 border-b border-neutral-800/50 bg-black/20">
-            <h2 className="font-semibold text-neutral-200">Stream Config</h2>
-          </div>
-        </div>
-
-        {/* AI Response Text Box */}
-        <div className="border-t border-neutral-800 bg-neutral-900 p-6 min-h-[150px]">
-          <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-3">AI Response</h3>
-          {currentAiResponse ? (
-            <p className="text-lg text-white leading-relaxed">{currentAiResponse}</p>
-          ) : (
-            <p className="text-lg text-neutral-600 italic">Waiting for comments...</p>
-          )}
-        </div>
-      </div>
-
-      {/* Right Sidebar - Comment Feed */}
-      <div className="w-80 border-l border-neutral-800 glass-panel flex flex-col z-10">
-        <div className="p-4 border-b border-neutral-800/50 bg-black/20 flex justify-between items-center">
-          <h3 className="text-sm font-semibold text-white">Live Comments</h3>
-          <span className="text-xs text-neutral-400">{comments.length} received</span>
-        </div>
-        
-        <div className="flex-1 overflow-y-auto p-4 space-y-1">
-          {comments.map((comment, index) => (
-            <div 
-              key={comment.id}
-              className={`py-1.5 px-3 text-[14px] leading-relaxed transition-colors animate-slide-up ${
-                comment.isGift ? 'bg-pink-500/20 rounded-xl my-1 border border-pink-500/30 shadow-[0_0_15px_rgba(236,72,153,0.15)]' :
-                comment.state === 'answered' ? 'bg-green-500/10 rounded-lg' :
-                comment.state === 'processing' ? 'bg-yellow-500/10 rounded-lg' :
-                comment.state === 'skipped' ? 'opacity-50' :
-                (comment.priorityScore > 2) ? 'bg-blue-500/10 rounded-lg' :
-                'bg-transparent'
-              }`}
-              style={{ animationDelay: `${Math.min(index * 50, 300)}ms` }}
-            >
-              <div className="inline-block w-full">
-                <span 
-                  className={`font-semibold mr-2 drop-shadow-sm ${comment.isGift ? 'text-pink-300' : 'text-neutral-300'}`}
-                >
-                  {comment.username}
-                </span>
-                
-                {comment.isGift && (
-                  <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-white font-bold px-1.5 py-0.5 rounded-full bg-pink-500 mr-2 align-middle">
-                    <Gift className="w-3 h-3" /> GIFT
-                  </span>
-                )}
-                
-                <span 
-                  className={`break-words ${comment.isGift ? 'font-bold text-pink-100' : 'text-white'}`} 
-                  style={{ textShadow: '0px 1px 2px rgba(0,0,0,0.8)' }}
-                >
-                  {comment.content}
-                </span>
-
-                {/* Status Badges - Float right or inline end */}
-                <span className="inline-flex ml-2 align-middle gap-1 opacity-70">
-                  {comment.priorityScore > 0 && !comment.isGift && (
-                    <span className="text-[10px] text-orange-400">★{comment.priorityScore}</span>
-                  )}
-                  {comment.state !== 'pending' && (
-                    <span className={`text-[10px] uppercase tracking-wider ${
-                      comment.state === 'processing' ? 'text-yellow-400' :
-                      comment.state === 'answered' ? 'text-green-400' : 'text-neutral-500'
-                    }`}>
-                      • {comment.state}
-                    </span>
-                  )}
-                </span>
+            {/* In-Video Comments Overlay (TikTok Style) */}
+            <div className="absolute bottom-0 left-0 w-full h-[50%] bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-4 z-20 pointer-events-none">
+              <div className="overflow-y-auto max-h-full space-y-1 scrollbar-hide pointer-events-auto flex flex-col-reverse pb-2">
+                {comments.map((comment, index) => (
+                  <div 
+                    key={comment.id}
+                    className={`py-1 px-2 text-[14px] leading-snug transition-colors animate-slide-up w-[85%] ${
+                      comment.isGift ? 'bg-pink-500/30 rounded-lg my-1 border border-pink-500/40 shadow-[0_0_15px_rgba(236,72,153,0.3)]' :
+                      comment.state === 'answered' ? 'bg-green-500/20 rounded-lg' :
+                      comment.state === 'processing' ? 'bg-yellow-500/20 rounded-lg' :
+                      comment.state === 'skipped' ? 'opacity-50' :
+                      'bg-transparent'
+                    }`}
+                    style={{ animationDelay: `${Math.min(index * 50, 300)}ms` }}
+                  >
+                    <div className="inline-block w-full">
+                      <span className={`font-bold mr-2 drop-shadow-md ${comment.isGift ? 'text-pink-300' : 'text-white/90'}`}>
+                        {comment.username}
+                      </span>
+                      
+                      {comment.isGift && (
+                        <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-white font-bold px-1.5 py-0.5 rounded-full bg-pink-500 mr-2 align-middle shadow-lg">
+                          <Gift className="w-3 h-3" /> GIFT
+                        </span>
+                      )}
+                      
+                      <span 
+                        className={`break-words ${comment.isGift ? 'font-bold text-pink-50' : 'text-white'}`} 
+                        style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.9)' }}
+                      >
+                        {comment.content}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
-          {comments.length === 0 && (
-             <div className="text-center text-neutral-500 mt-10">No comments yet</div>
-          )}
+            
+            {/* AI Response Subtitles */}
+            {currentAiResponse && (
+              <div className="absolute top-16 left-0 w-full p-4 flex justify-center z-20 pointer-events-none">
+                <div className="bg-black/70 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/10 max-w-[80%] text-center shadow-2xl animate-in fade-in slide-in-from-top-4">
+                  <p className="text-[16px] text-white font-medium leading-relaxed" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
+                    {currentAiResponse}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
