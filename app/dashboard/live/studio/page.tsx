@@ -223,6 +223,13 @@ export default function LiveStudio() {
     setHost(selected);
     reset(); // Clear previous session data
     
+    // Hack: Unlock Web Speech API immediately during the click event
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      const unlockMsg = new SpeechSynthesisUtterance(' ');
+      unlockMsg.volume = 0;
+      window.speechSynthesis.speak(unlockMsg);
+    }
+    
     queueRef.current = new CommentQueue(20);
     
     if (liveSource === 'tiktok') {
