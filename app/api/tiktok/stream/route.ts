@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
       let tiktokLiveConnection: TikTokLiveConnection | null = null;
 
       try {
-        tiktokLiveConnection = new TikTokLiveConnection(username);
+        tiktokLiveConnection = new TikTokLiveConnection(username, {});
 
         // Setup events before connecting
         // @ts-ignore
