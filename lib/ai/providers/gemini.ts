@@ -15,7 +15,7 @@ export class GeminiProvider implements AIProvider {
       }));
 
       const { text } = await generateText({
-        model: google('gemini-flash-latest'),
+        model: google('gemini-3.5-flash'),
         system: systemMessage?.content,
         messages: coreMessages,
         temperature: params.temperature ?? 0.7,
@@ -24,7 +24,7 @@ export class GeminiProvider implements AIProvider {
       return {
         content: text,
         provider: 'gemini',
-        model: 'gemini-flash-latest'
+        model: 'gemini-3.5-flash'
       };
     } catch (error) {
       console.error('Gemini generation error:', error);
