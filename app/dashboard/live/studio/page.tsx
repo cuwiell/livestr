@@ -17,6 +17,7 @@ import clsx from 'clsx';
 import { Canvas } from '@react-three/fiber';
 import { Environment, ContactShadows, Html, useProgress } from '@react-three/drei';
 import { AvatarModel } from '@/components/live/Avatar3D';
+import { ErrorBoundary } from '@/components/live/ErrorBoundary';
 import React, { Suspense } from 'react';
 
 function Loader() {
@@ -395,15 +396,17 @@ export default function LiveStudio() {
           )}>
             {host?.avatarUrl ? (
               host.avatarType === '3d' || host.avatarUrl.toLowerCase().endsWith('.glb') ? (
-                <Canvas camera={{ position: [0, 0, 5], fov: 40 }} className="w-full h-full bg-gradient-to-b from-neutral-800 to-neutral-950">
-                  <ambientLight intensity={1.5} />
-                  <directionalLight position={[-5, 5, 5]} intensity={1.5} />
-                  <Suspense fallback={<Loader />}>
-                    <AvatarModel url={host.avatarUrl} isSpeaking={isAiSpeaking} />
-                  </Suspense>
-                  <ContactShadows position={[0, -1.5, 0]} opacity={0.4} scale={10} blur={2} far={4} />
-                  <Environment preset="city" />
-                </Canvas>
+                <ErrorBoundary>
+                  <Canvas camera={{ position: [0, 0, 5], fov: 40 }} className="w-full h-full bg-gradient-to-b from-neutral-800 to-neutral-950">
+                    <ambientLight intensity={1.5} />
+                    <directionalLight position={[-5, 5, 5]} intensity={1.5} />
+                    <Suspense fallback={<Loader />}>
+                      <AvatarModel url={host.avatarUrl} isSpeaking={isAiSpeaking} />
+                    </Suspense>
+                    <ContactShadows position={[0, -1.5, 0]} opacity={0.4} scale={10} blur={2} far={4} />
+                    <Environment preset="city" />
+                  </Canvas>
+                </ErrorBoundary>
               ) : (host.avatarUrl.toLowerCase().endsWith('.mp4') || host.avatarUrl.toLowerCase().endsWith('.webm')) ? (
                 <video src={host.avatarUrl} autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : (

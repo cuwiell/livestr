@@ -173,34 +173,14 @@ export function Step2Appearance() {
                   }}
                   className="w-full rounded-xl border border-neutral-700 bg-neutral-800 p-3 text-white focus:border-purple-500 focus:outline-none placeholder-neutral-600 mb-2"
                 />
-                <p className="mt-2 text-xs text-neutral-500">
-                  Buat avatar gratis di <a href="https://readyplayer.me" target="_blank" className="text-purple-400 hover:underline">readyplayer.me</a> lalu salin link .glb-nya ke sini. Avatar 3D akan bisa lipsync secara otomatis!
-                </p>
-              </div>
-
-              <div className="pt-4 border-t border-neutral-800">
-                <p className="text-sm font-medium text-neutral-300 mb-3">Atau gunakan avatar bawaan:</p>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    onClick={() => {
-                      const url = 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934d6.glb';
-                      setInputUrl(url);
-                      updateData({ avatarUrl: url, avatarType: '3d' });
-                    }}
-                    className="p-3 text-xs rounded-lg border border-neutral-700 bg-neutral-800 hover:border-purple-500 hover:bg-neutral-700 transition"
-                  >
-                    👦 Pria Kacamata
-                  </button>
-                  <button
-                    onClick={() => {
-                      const url = 'https://models.readyplayer.me/64bfa15f0e72c63d7c3934d6.glb'; // Need female equivalent, using same for now
-                      setInputUrl(url);
-                      updateData({ avatarUrl: url, avatarType: '3d' });
-                    }}
-                    className="p-3 text-xs rounded-lg border border-neutral-700 bg-neutral-800 hover:border-purple-500 hover:bg-neutral-700 transition"
-                  >
-                    👩 Wanita Anime
-                  </button>
+                <div className="mt-4 p-4 rounded-xl border border-purple-500/30 bg-purple-500/10 text-xs text-neutral-300 space-y-2">
+                  <p className="font-bold text-purple-400">Cara Mendapatkan Avatar 3D Gratis:</p>
+                  <ol className="list-decimal list-inside space-y-1">
+                    <li>Kunjungi <a href="https://readyplayer.me" target="_blank" className="text-blue-400 hover:underline">readyplayer.me</a></li>
+                    <li>Buat akun dan desain avatar Anda (Baju, Rambut, Wajah)</li>
+                    <li>Setelah selesai, klik <strong>Share</strong> atau salin URL model <strong>.glb</strong> Anda</li>
+                    <li>Paste (tempel) URL tersebut ke kolom di atas!</li>
+                  </ol>
                 </div>
               </div>
             </div>
