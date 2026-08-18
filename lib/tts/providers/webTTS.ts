@@ -91,7 +91,17 @@ export class WebTTSProvider implements TTSProvider {
         resolve(); // Resolve anyway to not break the queue
       };
 
-      this.synth.speak(this.currentUtterance);
+      // Workaround 1: Resume synth in case it was paused automatically by Chrome
+      this.synth.resume();
+      
+      // Workaround 2: Delay speak slightly to avoid race conditions with cancel()
+      setTimeout(() => {
+        if (this.currentUtterance) {
+          this.synth.speak(this.currentUtterance);
+        } else {
+          resolve();
+        }
+      }, 50);
     });
   }
 
