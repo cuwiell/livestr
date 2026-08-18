@@ -53,9 +53,9 @@ export const useLiveStudio = create<LiveStudioState>((set) => ({
     // Prevent duplicate keys
     if (state.comments.some(c => c.id === comment.id)) return state;
     
-    // Keep max 100 comments in UI memory to prevent lag
-    const newComments = [...state.comments, comment];
-    if (newComments.length > 100) newComments.shift();
+    // Insert at the beginning so newest is at the top
+    const newComments = [comment, ...state.comments];
+    if (newComments.length > 100) newComments.pop(); // Remove oldest from the end
     return { comments: newComments };
   }),
   

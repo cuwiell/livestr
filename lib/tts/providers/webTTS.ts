@@ -45,20 +45,27 @@ export class WebTTSProvider implements TTSProvider {
 
   private async speakChunk(text: string, options?: TTSOptions): Promise<void> {
     return new Promise((resolve, _reject) => {
+      // Re-fetch voices just in case they loaded late
+      if (this.voices.length === 0 && this.synth.getVoices) {
+        this.voices = this.synth.getVoices();
+      }
+
       this.currentUtterance = new SpeechSynthesisUtterance(text);
 
       // Try to find a matching voice if requested
+      let selectedVoice: SpeechSynthesisVoice | undefined;
+      
       if (options?.voiceId) {
-        const exactVoice = this.voices.find(v => v.voiceURI === options.voiceId);
-        if (exactVoice) {
-          this.currentUtterance.voice = exactVoice;
-        }
-      } else if (options?.language) {
+        selectedVoice = this.voices.find(v => v.voiceURI === options.voiceId);
+      }
+      
+      if (!selectedVoice && options?.language) {
         // Fallback to language matching
-        const voice = this.voices.find(v => v.lang.includes(options.language as string));
-        if (voice) {
-          this.currentUtterance.voice = voice;
-        }
+        selectedVoice = this.voices.find(v => v.lang.includes(options.language as string));
+      }
+      
+      if (selectedVoice) {
+        this.currentUtterance.voice = selectedVoice;
       }
 
       if (options?.pitch !== undefined) {
