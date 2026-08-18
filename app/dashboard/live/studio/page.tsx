@@ -379,7 +379,7 @@ export default function LiveStudio() {
         <div className="flex-1 flex flex-col items-center justify-center py-6 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-800 to-neutral-950 relative overflow-hidden">
           
           <div className={clsx(
-            "relative w-full max-w-[400px] aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl transition-all duration-500",
+            "relative h-full max-h-[calc(100vh-14rem)] aspect-[9/16] w-auto rounded-3xl overflow-hidden shadow-2xl transition-all duration-500",
             isAiThinking ? "border-4 border-yellow-500 shadow-[0_0_50px_rgba(234,179,8,0.3)]" :
             isAiSpeaking ? "border-4 border-blue-500 shadow-[0_0_50px_rgba(59,130,246,0.4)] scale-[1.02]" :
             "border-4 border-neutral-700 shadow-xl"
