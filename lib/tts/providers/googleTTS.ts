@@ -36,7 +36,7 @@ export class GoogleTTSProvider implements TTSProvider {
 
       const lang = options?.language || 'id';
       // Use the unofficial free Google Translate TTS endpoint
-      const url = \https://translate.google.com/translate_tts?ie=UTF-8&tl=\&client=tw-ob&q=\\;
+      const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${lang}&client=tw-ob&q=${encodeURIComponent(text)}`;
       
       this.audio.src = url;
       this.audio.playbackRate = options?.speed ? Number(options.speed) : 1.0;
