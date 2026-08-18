@@ -12,7 +12,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: 'OpenAI API key not configured' }, { status: 500 });
     }
 
-    const response = await fetch('https://api.openai.com/v1/images/generations', {
+    let response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -26,7 +26,26 @@ export async function POST(req: Request) {
       }),
     });
 
-    const data = await response.json();
+    let data = await response.json();
+
+    // Fallback to DALL-E 2 if DALL-E 3 is not available on the user's API tier
+    if (!response.ok && data.error?.message?.includes('does not exist')) {
+      console.log('Falling back to dall-e-2...');
+      response = await fetch('https://api.openai.com/v1/images/generations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: 'dall-e-2',
+          prompt: `A beautiful portrait of: ${prompt}. High quality character design.`,
+          n: 1,
+          size: '1024x1024',
+        }),
+      });
+      data = await response.json();
+    }
 
     if (!response.ok) {
       throw new Error(data.error?.message || 'Failed to generate image');
